@@ -21447,7 +21447,7 @@
 
 	var React = __webpack_require__(1),
 	    ArticleStore = __webpack_require__(173),
-	    ApiUtil = __webpack_require__(174);
+	    ApiUtil = __webpack_require__(194);
 	
 	var Index = React.createClass({
 	  displayName: 'Index',
@@ -21458,6 +21458,8 @@
 	
 	  componentDidMount: function () {
 	    this.articleListener = ArticleStore.addListener(this._onChange);
+	
+	    ApiUtil.fetchArticles();
 	  },
 	
 	  _onChange: function () {
@@ -21465,13 +21467,61 @@
 	  },
 	
 	  render: function () {
-	    console.log(this.state.properties);
-	    return React.createElement(
-	      'div',
-	      null,
-	      'hello there',
-	      this.state.properties
-	    );
+	    console.log(this.state.articles);
+	    if (this.state.articles.length > 0) {
+	      return React.createElement(
+	        'div',
+	        { className: 'content' },
+	        React.createElement(
+	          'div',
+	          { className: 'header group' },
+	          React.createElement(
+	            'ul',
+	            null,
+	            React.createElement(
+	              'li',
+	              { className: 'unpublished-articles' },
+	              'UNPUBLISHED ARTICLES'
+	            ),
+	            React.createElement(
+	              'li',
+	              { className: 'author' },
+	              'AUTHOR'
+	            ),
+	            React.createElement(
+	              'li',
+	              { className: 'words' },
+	              'WORDS'
+	            ),
+	            React.createElement(
+	              'li',
+	              { className: 'submitted' },
+	              'SUBMITTED'
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          React.createElement(
+	            'li',
+	            null,
+	            'hello there'
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            this.state.articles[0].id
+	          )
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        'Loading'
+	      );
+	    }
 	  }
 	});
 	
@@ -21481,10 +21531,10 @@
 /* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Store = __webpack_require__(175).Store,
-	    ApiDispatcher = __webpack_require__(191),
+	var Store = __webpack_require__(174).Store,
+	    ApiDispatcher = __webpack_require__(190),
 	    ArticleStore = new Store(ApiDispatcher),
-	    ArticleConstants = __webpack_require__(194);
+	    ArticleConstants = __webpack_require__(193);
 	
 	var _articles = [];
 	
@@ -21504,7 +21554,7 @@
 	  switch (payload.actionType) {
 	    case ArticleConstants.ARTICLES_RECEIVED:
 	      resetArticles(payload.articles);
-	      ArticleStore.__emiteChange();
+	      ArticleStore.__emitChange();
 	      break;
 	  }
 	};
@@ -21513,35 +21563,6 @@
 
 /***/ },
 /* 174 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ApiActions = __webpack_require__(195);
-	
-	var ApiUtil = {
-	  fetchProperties: function () {
-	    var request = new XMLHttpRequest();
-	    var articles;
-	    request.open('GET', 'articles.json', true);
-	    request.onload = function () {
-	      if (request.status >= 200 && request.status < 400) {
-	        // Success!
-	        articles = JSON.parse(request.responseText);
-	        ApiActions.receiveAllArticles(articles);
-	      } else {
-	        // We reached our target server, but it returned an error
-	      }
-	    };
-	    request.onerror = function () {
-	      console.log('there was an error and the articles werent fetched');
-	    };
-	    request.send();
-	  }
-	};
-	
-	module.exports = ApiUtil;
-
-/***/ },
-/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21553,14 +21574,14 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Container = __webpack_require__(176);
-	module.exports.Mixin = __webpack_require__(181);
-	module.exports.ReduceStore = __webpack_require__(182);
-	module.exports.Store = __webpack_require__(183);
+	module.exports.Container = __webpack_require__(175);
+	module.exports.Mixin = __webpack_require__(180);
+	module.exports.ReduceStore = __webpack_require__(181);
+	module.exports.Store = __webpack_require__(182);
 
 
 /***/ },
-/* 176 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21583,11 +21604,11 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxContainerSubscriptions = __webpack_require__(177);
+	var FluxContainerSubscriptions = __webpack_require__(176);
 	var React = __webpack_require__(1);
 	
-	var invariant = __webpack_require__(179);
-	var shallowEqual = __webpack_require__(180);
+	var invariant = __webpack_require__(178);
+	var shallowEqual = __webpack_require__(179);
 	
 	var Component = React.Component;
 	
@@ -21833,7 +21854,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 177 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21851,7 +21872,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var FluxStoreGroup = __webpack_require__(178);
+	var FluxStoreGroup = __webpack_require__(177);
 	
 	var FluxContainerSubscriptions = (function () {
 	  function FluxContainerSubscriptions() {
@@ -21941,7 +21962,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 178 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21960,7 +21981,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(179);
+	var invariant = __webpack_require__(178);
 	
 	/**
 	 * FluxStoreGroup allows you to execute a callback on every dispatch after
@@ -22022,7 +22043,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 179 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -22077,7 +22098,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 180 */
+/* 179 */
 /***/ function(module, exports) {
 
 	/**
@@ -22149,7 +22170,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 181 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -22165,9 +22186,9 @@
 	
 	'use strict';
 	
-	var FluxStoreGroup = __webpack_require__(178);
+	var FluxStoreGroup = __webpack_require__(177);
 	
-	var invariant = __webpack_require__(179);
+	var invariant = __webpack_require__(178);
 	
 	/**
 	 * `FluxContainer` should be preferred over this mixin, but it requires using
@@ -22277,7 +22298,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 182 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -22297,10 +22318,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStore = __webpack_require__(183);
+	var FluxStore = __webpack_require__(182);
 	
-	var abstractMethod = __webpack_require__(190);
-	var invariant = __webpack_require__(179);
+	var abstractMethod = __webpack_require__(189);
+	var invariant = __webpack_require__(178);
 	
 	/**
 	 * This is the basic building block of a Flux application. All of your stores
@@ -22401,7 +22422,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 183 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -22419,11 +22440,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _require = __webpack_require__(184);
+	var _require = __webpack_require__(183);
 	
 	var EventEmitter = _require.EventEmitter;
 	
-	var invariant = __webpack_require__(179);
+	var invariant = __webpack_require__(178);
 	
 	/**
 	 * This class represents the most basic functionality for a FluxStore. Do not
@@ -22515,7 +22536,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 184 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22528,15 +22549,15 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(185),
-	  EmitterSubscription : __webpack_require__(186)
+	  EventEmitter: __webpack_require__(184),
+	  EmitterSubscription : __webpack_require__(185)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 185 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -22555,11 +22576,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(186);
-	var EventSubscriptionVendor = __webpack_require__(188);
+	var EmitterSubscription = __webpack_require__(185);
+	var EventSubscriptionVendor = __webpack_require__(187);
 	
-	var emptyFunction = __webpack_require__(189);
-	var invariant = __webpack_require__(179);
+	var emptyFunction = __webpack_require__(188);
+	var invariant = __webpack_require__(178);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -22733,7 +22754,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 186 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22754,7 +22775,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(187);
+	var EventSubscription = __webpack_require__(186);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -22786,7 +22807,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 187 */
+/* 186 */
 /***/ function(module, exports) {
 
 	/**
@@ -22840,7 +22861,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 188 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -22859,7 +22880,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(179);
+	var invariant = __webpack_require__(178);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -22949,7 +22970,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 189 */
+/* 188 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22992,7 +23013,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 190 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -23009,7 +23030,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(179);
+	var invariant = __webpack_require__(178);
 	
 	function abstractMethod(className, methodName) {
 	   true ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Subclasses of %s must override %s() with their own implementation.', className, methodName) : invariant(false) : undefined;
@@ -23019,15 +23040,15 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 191 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Dispatcher = __webpack_require__(192).Dispatcher;
+	var Dispatcher = __webpack_require__(191).Dispatcher;
 	
 	module.exports = new Dispatcher();
 
 /***/ },
-/* 192 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23039,11 +23060,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Dispatcher = __webpack_require__(193);
+	module.exports.Dispatcher = __webpack_require__(192);
 
 
 /***/ },
-/* 193 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -23065,7 +23086,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(179);
+	var invariant = __webpack_require__(178);
 	
 	var _prefix = 'ID_';
 	
@@ -23282,7 +23303,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 194 */
+/* 193 */
 /***/ function(module, exports) {
 
 	var ArticleConstants = {
@@ -23292,11 +23313,41 @@
 	module.exports = ArticleConstants;
 
 /***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ApiActions = __webpack_require__(195);
+	
+	var ApiUtil = {
+	  fetchArticles: function () {
+	    var request = new XMLHttpRequest();
+	    var articles;
+	    request.open('GET', 'articles.json', true);
+	    request.onload = function () {
+	      if (request.status >= 200 && request.status < 400) {
+	        // Success!
+	        articles = JSON.parse(request.responseText);
+	
+	        ApiActions.receiveAllArticles(articles);
+	      } else {
+	        // We reached our target server, but it returned an error
+	      }
+	    };
+	    request.onerror = function () {
+	      console.log('there was an error and the articles werent fetched');
+	    };
+	    request.send();
+	  }
+	};
+	
+	module.exports = ApiUtil;
+
+/***/ },
 /* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var ApiDispatcher = __webpack_require__(191),
-	    ArticleConstants = __webpack_require__(194);
+	var ApiDispatcher = __webpack_require__(190),
+	    ArticleConstants = __webpack_require__(193);
 	
 	var ApiActions = {
 	  receiveAllArticles: function (articles) {

@@ -21,7 +21,7 @@ ArticleStore.__onDispatch = function(payload) {
   switch(payload.actionType) {
     case ArticleConstants.ARTICLES_RECEIVED:
       resetArticles(payload.articles);
-      ArticleStore.__emiteChange();
+      ArticleStore.__emitChange();
       break;
   }
 };

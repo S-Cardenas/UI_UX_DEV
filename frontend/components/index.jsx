@@ -9,6 +9,8 @@ var Index = React.createClass({
 
   componentDidMount: function() {
     this.articleListener = ArticleStore.addListener(this._onChange);
+
+    ApiUtil.fetchArticles();
   },
 
   _onChange: function() {
@@ -16,13 +18,30 @@ var Index = React.createClass({
   },
 
   render: function() {
-    console.log(this.state.properties);
-    return(
-      <div>
-        hello there
-        {this.state.properties}
-      </div>
-    );
+    console.log(this.state.articles);
+    if (this.state.articles.length > 0) {
+      return(
+        <div className="content">
+          <div className="header group">
+            <ul>
+              <li className="unpublished-articles">UNPUBLISHED ARTICLES</li>
+              <li className="author">AUTHOR</li>
+              <li className="words">WORDS</li>
+              <li className="submitted">SUBMITTED</li>
+            </ul>
+          </div>
+          <div>
+            <li>hello there</li>
+            <li>{this.state.articles[0].id}</li>
+          </div>
+        </div>
+      );
+    }
+    else {
+      return (
+        <div>Loading</div>
+      );
+    }
   }
 });
 

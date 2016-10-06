@@ -1,7 +1,7 @@
 var ApiActions = require('../actions/api_actions.js');
 
 var ApiUtil = {
-  fetchProperties: function() {
+  fetchArticles: function() {
     var request = new XMLHttpRequest();
     var articles;
     request.open('GET', 'articles.json', true);
@@ -9,6 +9,7 @@ var ApiUtil = {
       if (request.status >= 200 && request.status < 400){
         // Success!
         articles = JSON.parse(request.responseText);
+
         ApiActions.receiveAllArticles(articles);
       }
       else {
