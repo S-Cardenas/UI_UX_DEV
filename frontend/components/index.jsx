@@ -4,7 +4,7 @@ var React = require('react'),
 
 var Index = React.createClass({
   getInitialState: function() {
-    return { articles: ArticleStore.all() };
+    return { articles: ArticleStore.all(), idx: 1 };
   },
 
   componentDidMount: function() {
@@ -16,16 +16,20 @@ var Index = React.createClass({
     this.setState({ articles: ArticleStore.all() });
   },
 
+  _increaseIdx: function() {
+    var nextIdx = this.state.idx + 1;
+    this.setState({ idx: nextIdx});
+  },
+
   render: function() {
-    console.log(this.state.articles);
     if (this.state.articles.length > 0) {
       var myArticles = this.state.articles.map(function(article, i) {
         return(
           <div className="article-item group" key={i}>
 
             <div className="item-title group">
-              <img className="title-image"></img>
-              <div>{article.title}</div>
+              <img className="title-image" src={article.image}></img>
+              <a href={article.url}>{article.title}</a>
             </div>
 
             <div className="item-author">
@@ -44,6 +48,8 @@ var Index = React.createClass({
         );
       }.bind(this));
 
+      var showArticles = myArticles.slice(0, (this.state.idx * 10) - 1);
+
       return(
         <div className="content">
 
@@ -57,8 +63,10 @@ var Index = React.createClass({
           </div>
 
           <div className="articles-list">
-            {myArticles}
+            {showArticles}
           </div>
+
+          <button className="load-more" onClick={this._increaseIdx}>Load More</button>
 
         </div>
       );

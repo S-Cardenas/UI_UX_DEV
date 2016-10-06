@@ -21453,7 +21453,7 @@
 	  displayName: 'Index',
 	
 	  getInitialState: function () {
-	    return { articles: ArticleStore.all() };
+	    return { articles: ArticleStore.all(), idx: 1 };
 	  },
 	
 	  componentDidMount: function () {
@@ -21465,8 +21465,12 @@
 	    this.setState({ articles: ArticleStore.all() });
 	  },
 	
+	  _increaseIdx: function () {
+	    var nextIdx = this.state.idx + 1;
+	    this.setState({ idx: nextIdx });
+	  },
+	
 	  render: function () {
-	    console.log(this.state.articles);
 	    if (this.state.articles.length > 0) {
 	      var myArticles = this.state.articles.map(function (article, i) {
 	        return React.createElement(
@@ -21475,10 +21479,10 @@
 	          React.createElement(
 	            'div',
 	            { className: 'item-title group' },
-	            React.createElement('img', { className: 'title-image' }),
+	            React.createElement('img', { className: 'title-image', src: article.image }),
 	            React.createElement(
-	              'div',
-	              null,
+	              'a',
+	              { href: article.url },
 	              article.title
 	            )
 	          ),
@@ -21501,6 +21505,8 @@
 	          )
 	        );
 	      }.bind(this));
+	
+	      var showArticles = myArticles.slice(0, this.state.idx * 10 - 1);
 	
 	      return React.createElement(
 	        'div',
@@ -21536,7 +21542,12 @@
 	        React.createElement(
 	          'div',
 	          { className: 'articles-list' },
-	          myArticles
+	          showArticles
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'load-more', onClick: this._increaseIdx },
+	          'Load More'
 	        )
 	      );
 	    } else {
