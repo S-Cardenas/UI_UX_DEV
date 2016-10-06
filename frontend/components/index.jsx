@@ -30,6 +30,13 @@ var Index = React.createClass({
   render: function() {
     if (this.state.articles.length > 0) {
       var myArticles = this.state.articles.map(function(article, i) {
+        var currentTime = new Date(),
+            publishedTime = new Date(article.publish_at),
+            elapsedSec = Math.floor((currentTime - publishedTime)/1000),
+            elapsedMin = Math.floor(elapsedSec / 60),
+            elapsedHours = Math.floor(elapsedMin / 60),
+            elapsedDays = Math.floor(elapsedHours / 24);
+
         return(
           <div className="article-item group" key={i}>
 
@@ -47,7 +54,7 @@ var Index = React.createClass({
             </div>
 
             <div className="item-submitted">
-              {article.publish_at}
+              {elapsedDays} days ago
             </div>
 
           </div>
