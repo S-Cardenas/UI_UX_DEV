@@ -9,6 +9,10 @@ var resetArticles = function(articles) {
   _articles = articles;
 };
 
+var appendArticles = function(newArticles) {
+  _articles = _articles.concat(newArticles);
+};
+
 ArticleStore.all = function() {
   return _articles.slice(0);
 };
@@ -21,6 +25,10 @@ ArticleStore.__onDispatch = function(payload) {
   switch(payload.actionType) {
     case ArticleConstants.ARTICLES_RECEIVED:
       resetArticles(payload.articles);
+      ArticleStore.__emitChange();
+      break;
+    case ArticleConstants.APPEND_ARTICLES:
+      appendArticles(payload.articles);
       ArticleStore.__emitChange();
       break;
   }

@@ -18,7 +18,13 @@ var Index = React.createClass({
 
   _increaseIdx: function() {
     var nextIdx = this.state.idx + 1;
-    this.setState({ idx: nextIdx});
+    if (nextIdx === 4) {
+      ApiUtil.fetchMoreArticles();
+      this.setState({ idx: nextIdx});
+    }
+    else {
+      this.setState({ idx: nextIdx});
+    }
   },
 
   render: function() {

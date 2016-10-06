@@ -21467,7 +21467,12 @@
 	
 	  _increaseIdx: function () {
 	    var nextIdx = this.state.idx + 1;
-	    this.setState({ idx: nextIdx });
+	    if (nextIdx === 4) {
+	      ApiUtil.fetchMoreArticles();
+	      this.setState({ idx: nextIdx });
+	    } else {
+	      this.setState({ idx: nextIdx });
+	    }
 	  },
 	
 	  render: function () {
@@ -21577,6 +21582,10 @@
 	  _articles = articles;
 	};
 	
+	var appendArticles = function (newArticles) {
+	  _articles = _articles.concat(newArticles);
+	};
+	
 	ArticleStore.all = function () {
 	  return _articles.slice(0);
 	};
@@ -21589,6 +21598,10 @@
 	  switch (payload.actionType) {
 	    case ArticleConstants.ARTICLES_RECEIVED:
 	      resetArticles(payload.articles);
+	      ArticleStore.__emitChange();
+	      break;
+	    case ArticleConstants.APPEND_ARTICLES:
+	      appendArticles(payload.articles);
 	      ArticleStore.__emitChange();
 	      break;
 	  }
@@ -23342,7 +23355,8 @@
 /***/ function(module, exports) {
 
 	var ArticleConstants = {
-	  ARTICLES_RECEIVED: "ARTICLES_RECEIVED"
+	  ARTICLES_RECEIVED: "ARTICLES_RECEIVED",
+	  APPEND_ARTICLES: "APPEND_ARTICLES"
 	};
 	
 	module.exports = ArticleConstants;
@@ -23372,6 +23386,26 @@
 	      console.log('there was an error and the articles werent fetched');
 	    };
 	    request.send();
+	  },
+	
+	  fetchMoreArticles: function () {
+	    var request = new XMLHttpRequest();
+	    var articles;
+	    request.open('GET', 'more-articles.json', true);
+	    request.onload = function () {
+	      if (request.status >= 200 && request.status < 400) {
+	        // Success!
+	        articles = JSON.parse(request.responseText);
+	
+	        ApiActions.appendArticles(articles);
+	      } else {
+	        // We reached our target server, but it returned an error
+	      }
+	    };
+	    request.onerror = function () {
+	      console.log('there was an error and the other articles werent fetched');
+	    };
+	    request.send();
 	  }
 	};
 	
@@ -23388,6 +23422,13 @@
 	  receiveAllArticles: function (articles) {
 	    ApiDispatcher.dispatch({
 	      actionType: ArticleConstants.ARTICLES_RECEIVED,
+	      articles: articles
+	    });
+	  },
+	
+	  appendArticles: function (articles) {
+	    ApiDispatcher.dispatch({
+	      actionType: ArticleConstants.APPEND_ARTICLES,
 	      articles: articles
 	    });
 	  }

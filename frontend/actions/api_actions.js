@@ -7,6 +7,13 @@ var ApiActions = {
       actionType: ArticleConstants.ARTICLES_RECEIVED,
       articles: articles
     });
+  },
+
+  appendArticles: function(articles) {
+    ApiDispatcher.dispatch({
+      actionType: ArticleConstants.APPEND_ARTICLES,
+      articles: articles
+    });
   }
 };
 
