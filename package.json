@@ -1,0 +1,22 @@
+{
+  "name": "UI_UX_DEV",
+  "version": "1.0.0",
+  "description": "## General Guidelines This is a Frontend developer competency test designed to gauge skill, attention to detail and affinity for standards based development.",
+  "main": "index.js",
+  "dependencies": {
+    "babel-preset-react": "^6.16.0",
+    "flux": "^3.0.0",
+    "react": "^15.3.2",
+    "babel-loader": "^6.2.5",
+    "webpack": "^1.13.2",
+    "babel-core": "^6.17.0",
+    "react-dom": "^15.3.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
