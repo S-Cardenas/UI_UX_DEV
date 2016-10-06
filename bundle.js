@@ -21458,7 +21458,6 @@
 	
 	  componentDidMount: function () {
 	    this.articleListener = ArticleStore.addListener(this._onChange);
-	
 	    ApiUtil.fetchArticles();
 	  },
 	
@@ -21469,6 +21468,40 @@
 	  render: function () {
 	    console.log(this.state.articles);
 	    if (this.state.articles.length > 0) {
+	      var myArticles = this.state.articles.map(function (article, i) {
+	        return React.createElement(
+	          'div',
+	          { className: 'article-item group', key: i },
+	          React.createElement(
+	            'div',
+	            { className: 'item-title group' },
+	            React.createElement('img', { className: 'title-image' }),
+	            React.createElement(
+	              'div',
+	              null,
+	              article.title
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'item-author' },
+	            article.profile.first_name,
+	            ' ',
+	            article.profile.last_name
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'item-words' },
+	            article.words
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'item-submitted' },
+	            article.publish_at
+	          )
+	        );
+	      }.bind(this));
+	
 	      return React.createElement(
 	        'div',
 	        { className: 'content' },
@@ -21502,17 +21535,8 @@
 	        ),
 	        React.createElement(
 	          'div',
-	          null,
-	          React.createElement(
-	            'li',
-	            null,
-	            'hello there'
-	          ),
-	          React.createElement(
-	            'li',
-	            null,
-	            this.state.articles[0].id
-	          )
+	          { className: 'articles-list' },
+	          myArticles
 	        )
 	      );
 	    } else {

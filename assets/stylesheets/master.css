@@ -95,3 +95,47 @@ img {
   width: 137px;
   text-align: center;
 }
+
+.articles-list {
+  border: 1px solid grey;
+}
+
+.item-title {
+  border-right: 1px solid grey;
+  border-bottom: 1px solid grey;
+  padding-left: 10px;
+  width: 830px;
+  height: 80px;
+  line-height: 80px;
+  float: left;
+}
+
+.item-author {
+  border-right: 1px solid grey;
+  border-bottom: 1px solid grey;
+  width: 130px;
+  padding-left: 10px;
+  height: 80px;
+  line-height: 80px;
+  float: left;
+}
+
+.item-words {
+  border-right: 1px solid grey;
+  border-bottom: 1px solid grey;
+  width: 80px;
+  text-align: center;
+  height: 80px;
+  line-height: 80px;
+  float: left;
+}
+
+.item-submitted {
+  border-bottom: 1px solid grey;
+  width: 135px;
+  word-wrap: break-word;
+  text-align: center;
+  height: 80px;
+  line-height: 80px;
+  float: left;
+}

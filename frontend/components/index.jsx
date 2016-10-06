@@ -9,7 +9,6 @@ var Index = React.createClass({
 
   componentDidMount: function() {
     this.articleListener = ArticleStore.addListener(this._onChange);
-
     ApiUtil.fetchArticles();
   },
 
@@ -20,8 +19,34 @@ var Index = React.createClass({
   render: function() {
     console.log(this.state.articles);
     if (this.state.articles.length > 0) {
+      var myArticles = this.state.articles.map(function(article, i) {
+        return(
+          <div className="article-item group" key={i}>
+
+            <div className="item-title group">
+              <img className="title-image"></img>
+              <div>{article.title}</div>
+            </div>
+
+            <div className="item-author">
+              {article.profile.first_name} {article.profile.last_name}
+            </div>
+
+            <div className="item-words">
+              {article.words}
+            </div>
+
+            <div className="item-submitted">
+              {article.publish_at}
+            </div>
+
+          </div>
+        );
+      }.bind(this));
+
       return(
         <div className="content">
+
           <div className="header group">
             <ul>
               <li className="unpublished-articles">UNPUBLISHED ARTICLES</li>
@@ -30,10 +55,11 @@ var Index = React.createClass({
               <li className="submitted">SUBMITTED</li>
             </ul>
           </div>
-          <div>
-            <li>hello there</li>
-            <li>{this.state.articles[0].id}</li>
+
+          <div className="articles-list">
+            {myArticles}
           </div>
+
         </div>
       );
     }
