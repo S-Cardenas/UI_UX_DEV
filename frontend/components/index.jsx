@@ -4,7 +4,8 @@ var React = require('react'),
 
 var Index = React.createClass({
   getInitialState: function() {
-    return { articles: ArticleStore.all(), idx: 1 };
+    return { articles: ArticleStore.all(), idx: 1, sorted: false,
+            submittedSort: false };
   },
 
   componentDidMount: function() {
@@ -20,16 +21,71 @@ var Index = React.createClass({
     var nextIdx = this.state.idx + 1;
     if (nextIdx === 4) {
       ApiUtil.fetchMoreArticles();
-      this.setState({ idx: nextIdx});
+      this.setState({ idx: nextIdx });
     }
     else {
       this.setState({ idx: nextIdx});
     }
   },
 
+  _sortWords: function() {
+    var sortedArticles = this.state.articles.slice(0);
+
+    sortedArticles = sortedArticles.sort(function(a, b) {
+      if (a.words > b.words) {
+         return 1;
+      }
+      if (a.words < b.words) {
+         return -1;
+      }
+      return 0;
+    });
+
+    return sortedArticles;
+  },
+
+  _sortSubmitted: function() {
+    var sortedArticles = this.state.articles.slice(0);
+
+    sortedArticles = sortedArticles.sort(function(a, b) {
+      var aDate = new Date(a.publish_at),
+          bDate = new Date(b.publish_at);
+
+      if (aDate.getTime() > bDate.getTime()) {
+         return 1;
+      }
+      if (aDate.getTime() < bDate.getTime()) {
+         return -1;
+      }
+      return 0;
+    });
+
+    return sortedArticles;
+  },
+
+  _setSortState: function() {
+    var truthiness = !this.state.sorted;
+    this.setState({ sorted: truthiness });
+  },
+
+  _setSubmittedSortState: function() {
+    var truthiness = !this.state.submittedSort;
+    this.setState({ submittedSort: truthiness });
+  },
+
   render: function() {
     if (this.state.articles.length > 0) {
-      var myArticles = this.state.articles.map(function(article, i) {
+      var myArticles;
+      if (this.state.sorted) {
+        myArticles = this._sortWords();
+      }
+      else if (this.state.submittedSort) {
+        myArticles = this._sortSubmitted();
+      }
+      else {
+        myArticles = this.state.articles;
+      }
+        myArticles = myArticles.map(function(article, i) {
         var currentTime = new Date(),
             publishedTime = new Date(article.publish_at),
             elapsedSec = Math.floor((currentTime - publishedTime)/1000),
@@ -70,8 +126,8 @@ var Index = React.createClass({
             <ul>
               <li className="unpublished-articles">UNPUBLISHED ARTICLES</li>
               <li className="author">AUTHOR</li>
-              <li className="words">WORDS</li>
-              <li className="submitted">SUBMITTED</li>
+              <li className="words" onClick={this._setSortState}>WORDS</li>
+              <li className="submitted" onClick={this._setSubmittedSortState}>SUBMITTED</li>
             </ul>
           </div>
 
