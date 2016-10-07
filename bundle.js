@@ -48,28 +48,6 @@
 	    ReactDOM = __webpack_require__(34),
 	    Index = __webpack_require__(172);
 	
-	// var request = new XMLHttpRequest();
-	// var data;
-	// request.open('GET', 'articles.json', true);
-	//
-	// request.onload = function() {
-	//   if (request.status >= 200 && request.status < 400){
-	//     // Success!
-	//     data = JSON.parse(request.responseText);
-	//     window.data = data;
-	//   }
-	//   else {
-	//     // We reached our target server, but it returned an error
-	//
-	//   }
-	// };
-	//
-	// request.onerror = function() {
-	//   // There was a connection error of some sort
-	// };
-	//
-	// request.send();
-	
 	document.addEventListener("DOMContentLoaded", function () {
 	    ReactDOM.render(React.createElement(Index, null), document.getElementById('root'));
 	});
@@ -21575,7 +21553,7 @@
 	        );
 	      }.bind(this));
 	
-	      var showArticles = myArticles.slice(0, this.state.idx * 10 - 1);
+	      var showArticles = myArticles.slice(0, this.state.idx * 10);
 	
 	      return React.createElement(
 	        'div',
@@ -21589,7 +21567,9 @@
 	            React.createElement(
 	              'li',
 	              { className: 'unpublished-articles' },
-	              'UNPUBLISHED ARTICLES'
+	              'UNPUBLISHED ARTICLES (',
+	              showArticles.length,
+	              ')'
 	            ),
 	            React.createElement(
 	              'li',

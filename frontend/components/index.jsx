@@ -119,14 +119,14 @@ var Index = React.createClass({
         );
       }.bind(this));
 
-      var showArticles = myArticles.slice(0, (this.state.idx * 10) - 1);
+      var showArticles = myArticles.slice(0, (this.state.idx * 10));
 
       return(
         <div className="content">
 
           <div className="header group">
             <ul>
-              <li className="unpublished-articles">UNPUBLISHED ARTICLES</li>
+              <li className="unpublished-articles">UNPUBLISHED ARTICLES ({showArticles.length})</li>
               <li className="author">AUTHOR</li>
               <li className="words" onClick={this._setSortState}>WORDS</li>
               <li className="submitted" onClick={this._setSubmittedSortState}>SUBMITTED</li>

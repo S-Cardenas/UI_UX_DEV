@@ -61,10 +61,12 @@ img {
 }
 
 .header {
-  background-color: #DC143C;
+  background-color: #660033;
+  border-bottom: 3px solid red;
   height: 64px;
   color: white;
   font-weight: 900;
+  font-size: 13px;
 }
 
 .header li {
@@ -74,21 +76,26 @@ img {
 }
 
 .unpublished-articles {
-  border-right: 1px solid grey;
+  border-right: 1px solid black;
   padding-left: 10px;
   width: 830px;
 }
 
 .author {
-  border-right: 1px solid grey;
+  border-right: 1px solid black;
   width: 130px;
   padding-left: 10px;
 }
 
 .words {
-  border-right: 1px solid grey;
+  border-right: 1px solid black;
   width: 80px;
   text-align: center;
+}
+
+.words:hover {
+  color: yellow;
+  cursor: pointer;
 }
 
 .submitted {
@@ -96,8 +103,14 @@ img {
   text-align: center;
 }
 
+.submitted:hover {
+  color: yellow;
+  cursor: pointer;
+}
+
 .articles-list {
-  border: 1px solid grey;
+  border-left: 1px solid #DCDCDC;
+  border-right: 1px solid #DCDCDC;
 }
 
 .article-item.odd {
@@ -109,12 +122,12 @@ img {
 }
 
 .item-title {
-  border-right: 1px solid grey;
-  border-bottom: 1px solid grey;
+  border-right: 1px solid #DCDCDC;
+  border-bottom: 1px solid #DCDCDC;
   padding-left: 10px;
-  width: 830px;
+  width: 829px;
   height: 80px;
-  line-height: 80px;
+  line-height: 45px;
   float: left;
 }
 
@@ -122,15 +135,27 @@ img {
   height: 50px;
   width: 50px;
   float: left;
+  margin-top: 15px;
+  margin-right: 10px;
 }
 
 .item-title a {
+  font-size: 14px;
   float: left;
+  color: #000080;
+  font-weight: 900;
+}
+
+.item-title a:hover {
+  font-size: 14px;
+  float: left;
+  color: #7B68EE;
+  font-weight: 900;
 }
 
 .item-author {
-  border-right: 1px solid grey;
-  border-bottom: 1px solid grey;
+  border-right: 1px solid #DCDCDC;
+  border-bottom: 1px solid #DCDCDC;
   width: 130px;
   padding-left: 10px;
   height: 80px;
@@ -139,8 +164,8 @@ img {
 }
 
 .item-words {
-  border-right: 1px solid grey;
-  border-bottom: 1px solid grey;
+  border-right: 1px solid #DCDCDC;
+  border-bottom: 1px solid #DCDCDC;
   width: 80px;
   text-align: center;
   height: 80px;
@@ -149,7 +174,7 @@ img {
 }
 
 .item-submitted {
-  border-bottom: 1px solid grey;
+  border-bottom: 1px solid #DCDCDC;
   width: 135px;
   word-wrap: break-word;
   text-align: center;
@@ -159,9 +184,11 @@ img {
 }
 
 .load-more {
-  background-color: #DC143C;
+  margin-top: 15px;
+  background-color: #660033;
   text-align: center;
   color: white;
   width: 100px;
   height: 50px;
+  font-weight: 900;
 }
