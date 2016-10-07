@@ -147,10 +147,7 @@ img {
 }
 
 .item-title a:hover {
-  font-size: 14px;
-  float: left;
   color: #7B68EE;
-  font-weight: 900;
 }
 
 .item-author {
