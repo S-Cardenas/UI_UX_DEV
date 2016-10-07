@@ -91,10 +91,12 @@ var Index = React.createClass({
             elapsedSec = Math.floor((currentTime - publishedTime)/1000),
             elapsedMin = Math.floor(elapsedSec / 60),
             elapsedHours = Math.floor(elapsedMin / 60),
-            elapsedDays = Math.floor(elapsedHours / 24);
+            elapsedDays = Math.floor(elapsedHours / 24),
+            parity = ( (i % 2 === 0) ? 'odd' : 'even'),
+            classTitle = "article-item " + parity + " group";
 
         return(
-          <div className="article-item group" key={i}>
+          <div className={classTitle} key={i}>
 
             <div className="item-title group">
               <img className="title-image" src={article.image}></img>

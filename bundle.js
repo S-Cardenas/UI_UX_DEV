@@ -21537,11 +21537,13 @@
 	            elapsedSec = Math.floor((currentTime - publishedTime) / 1000),
 	            elapsedMin = Math.floor(elapsedSec / 60),
 	            elapsedHours = Math.floor(elapsedMin / 60),
-	            elapsedDays = Math.floor(elapsedHours / 24);
+	            elapsedDays = Math.floor(elapsedHours / 24),
+	            parity = i % 2 === 0 ? 'odd' : 'even',
+	            classTitle = "article-item " + parity + " group";
 	
 	        return React.createElement(
 	          'div',
-	          { className: 'article-item group', key: i },
+	          { className: classTitle, key: i },
 	          React.createElement(
 	            'div',
 	            { className: 'item-title group' },
