@@ -21535,9 +21535,13 @@
 	          React.createElement(
 	            'div',
 	            { className: 'item-author' },
-	            article.profile.first_name,
-	            ' ',
-	            article.profile.last_name
+	            React.createElement(
+	              'p',
+	              null,
+	              article.profile.first_name,
+	              ' ',
+	              article.profile.last_name
+	            )
 	          ),
 	          React.createElement(
 	            'div',

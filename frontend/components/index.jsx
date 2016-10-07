@@ -104,7 +104,9 @@ var Index = React.createClass({
             </div>
 
             <div className="item-author">
-              {article.profile.first_name} {article.profile.last_name}
+              <p>
+                {article.profile.first_name} {article.profile.last_name}
+              </p>
             </div>
 
             <div className="item-words">
