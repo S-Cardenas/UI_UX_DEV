@@ -1,9 +1,8 @@
 var React = require('react'),
     ArticleStore = require('../stores/article_store.js'),
-    ApiUtil = require('../util/api_util.js'),
-    Link = require('react-router').Link;
+    ApiUtil = require('../util/api_util.js');
 
-var Index = React.createClass({
+var SortWords = React.createClass({
   getInitialState: function() {
     return { articles: ArticleStore.all(), idx: 1, sorted: false,
             submittedSort: false };
@@ -75,6 +74,7 @@ var Index = React.createClass({
   },
 
   render: function() {
+    console.log(this.props.blank);
     if (this.state.articles.length > 0) {
       var myArticles;
       if (this.state.sorted) {
@@ -141,7 +141,7 @@ var Index = React.createClass({
           </div>
 
           <button className="load-more" onClick={this._increaseIdx}>Load More</button>
-          <Link to={'/sortedwords'} params={{blank: 'stefan cardenas'}}>Sorted Words</Link>
+
         </div>
       );
     }
@@ -153,4 +153,4 @@ var Index = React.createClass({
   }
 });
 
-module.exports = Index;
+module.exports = SortWords;

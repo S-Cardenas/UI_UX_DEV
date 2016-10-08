@@ -197,3 +197,8 @@ img {
   height: 50px;
   font-weight: 900;
 }
+
+.load-more:hover {
+  color: yellow;
+  cursor: pointer;
+}
