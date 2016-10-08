@@ -3,10 +3,11 @@ var React = require('react'),
     ApiUtil = require('../util/api_util.js'),
     Link = require('react-router').Link;
 
-var Index = React.createClass({
+var SortSubmitted = React.createClass({
   getInitialState: function() {
-    var cidx = (this.props.location.query.idx ? parseInt(this.props.location.query.idx) : 1);
-    return { articles: ArticleStore.all(), idx: cidx };
+    return { articles: ArticleStore.all(),
+            idx: parseInt(this.props.location.query.idx),
+            sort: 'descending' };
   },
 
   componentDidMount: function() {
@@ -38,27 +39,43 @@ var Index = React.createClass({
     }
   },
 
+  _sortSubmitted: function() {
+    var sortedArticles = this.state.articles.slice(0),
+        polarity = ((this.state.sort === 'descending') ? 1 : -1);
+
+    sortedArticles = sortedArticles.sort(function(a, b) {
+      var aDate = new Date(a.publish_at),
+          bDate = new Date(b.publish_at);
+
+      if (aDate.getTime() > bDate.getTime()) {
+         return polarity * 1;
+      }
+      if (aDate.getTime() < bDate.getTime()) {
+         return polarity * -1;
+      }
+      return 0;
+    });
+
+    return sortedArticles;
+  },
+
+  _setSortState: function() {
+    var newSort = ((this.state.sort === 'descending') ? 'ascending' : "descending");
+    this.setState({ sort: newSort});
+  },
+
   render: function() {
     if (this.state.articles.length > 0) {
-      var myArticles;
-      if (this.state.sorted) {
-        myArticles = this._sortWords();
-      }
-      else if (this.state.submittedSort) {
-        myArticles = this._sortSubmitted();
-      }
-      else {
-        myArticles = this.state.articles;
-      }
-        myArticles = myArticles.map(function(article, i) {
-        var currentTime = new Date(),
-            publishedTime = new Date(article.publish_at),
-            elapsedSec = Math.floor((currentTime - publishedTime)/1000),
-            elapsedMin = Math.floor(elapsedSec / 60),
-            elapsedHours = Math.floor(elapsedMin / 60),
-            elapsedDays = Math.floor(elapsedHours / 24),
-            parity = ( (i % 2 === 0) ? 'odd' : 'even'),
-            classTitle = "article-item " + parity + " group";
+      var myArticles  = this._sortSubmitted();
+      myArticles = myArticles.map(function(article, i) {
+      var currentTime = new Date(),
+          publishedTime = new Date(article.publish_at),
+          elapsedSec = Math.floor((currentTime - publishedTime)/1000),
+          elapsedMin = Math.floor(elapsedSec / 60),
+          elapsedHours = Math.floor(elapsedMin / 60),
+          elapsedDays = Math.floor(elapsedHours / 24),
+          parity = ( (i % 2 === 0) ? 'odd' : 'even'),
+          classTitle = "article-item " + parity + " group";
 
         return(
           <div className={classTitle} key={i}>
@@ -102,9 +119,10 @@ var Index = React.createClass({
               <Link to={{ pathname:'/sortedwords', query: { idx: this.state.idx} }}>
                 <li className="words">WORDS</li>
               </Link>
-              <Link to={{ pathname:'/sortedsubmitted', query: { idx: this.state.idx} }}>
-                <li className="submitted">SUBMITTED</li>
-              </Link>
+              <li className="submitted" onClick={this._setSortState}>
+                SUBMITTED
+              </li>
+
             </ul>
           </div>
 
@@ -125,4 +143,4 @@ var Index = React.createClass({
   }
 });
 
-module.exports = Index;
+module.exports = SortSubmitted;

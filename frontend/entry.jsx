@@ -5,13 +5,15 @@ var React = require('react'),
     Router = require('react-router').Router,
     Route = require('react-router').Route,
     IndexRoute = require('react-router').IndexRoute,
-    SortedWords = require('./components/sort_Words.jsx');
+    SortedWords = require('./components/sort_Words.jsx'),
+    SortSubmitted = require('./components/sort_submitted.jsx');
 
 var routes = (
   <Router history={hashHistory}>
     <Route path="/" >
       <IndexRoute component={Index}/>
       <Route path="sortedwords" component={SortedWords} />
+      <Route path="sortedsubmitted" component={SortSubmitted} />
     </Route>
   </Router>
 );

@@ -5,13 +5,19 @@ var React = require('react'),
 
 var SortWords = React.createClass({
   getInitialState: function() {
-    return { articles: ArticleStore.all(), idx: this.props.location.query.idx, sorted: true,
-            submittedSort: false };
+    return { articles: ArticleStore.all(),
+            idx: parseInt(this.props.location.query.idx),
+            sort: 'descending'};
   },
 
   componentDidMount: function() {
     this.listener = ArticleStore.addListener(this._onChange);
-    ApiUtil.fetchArticles();
+    if (this.state.idx < 4) {
+      ApiUtil.fetchArticles();
+    }
+    else {
+      ApiUtil.fetchMoreArticles();
+    }
   },
 
   componentWillUnmount: function() {
@@ -34,33 +40,15 @@ var SortWords = React.createClass({
   },
 
   _sortWords: function() {
-    var sortedArticles = this.state.articles.slice(0);
+    var sortedArticles = this.state.articles.slice(0),
+        polarity = ((this.state.sort === 'descending') ? 1 : -1);
 
     sortedArticles = sortedArticles.sort(function(a, b) {
       if (a.words > b.words) {
-         return 1;
+         return polarity * 1;
       }
       if (a.words < b.words) {
-         return -1;
-      }
-      return 0;
-    });
-
-    return sortedArticles;
-  },
-
-  _sortSubmitted: function() {
-    var sortedArticles = this.state.articles.slice(0);
-
-    sortedArticles = sortedArticles.sort(function(a, b) {
-      var aDate = new Date(a.publish_at),
-          bDate = new Date(b.publish_at);
-
-      if (aDate.getTime() > bDate.getTime()) {
-         return 1;
-      }
-      if (aDate.getTime() < bDate.getTime()) {
-         return -1;
+         return polarity * -1;
       }
       return 0;
     });
@@ -69,18 +57,11 @@ var SortWords = React.createClass({
   },
 
   _setSortState: function() {
-    var truthiness = !this.state.sorted;
-    this.setState({ sorted: truthiness, submittedSort: false });
-  },
-
-  _setSubmittedSortState: function() {
-    var truthiness = !this.state.submittedSort;
-    this.setState({ submittedSort: truthiness, sorted: false });
+    var newSort = ((this.state.sort === 'descending') ? 'ascending' : "descending");
+    this.setState({ sort: newSort});
   },
 
   render: function() {
-    console.log(this.props.location.query.idx);
-    console.log('sortedWords');
     if (this.state.articles.length > 0) {
       var myArticles  = this._sortWords();
       myArticles = myArticles.map(function(article, i) {
@@ -117,7 +98,7 @@ var SortWords = React.createClass({
 
           </div>
         );
-      }.bind(this));
+      });
 
       var showArticles = myArticles.slice(0, (this.state.idx * 10));
 
@@ -126,12 +107,18 @@ var SortWords = React.createClass({
 
           <div className="header group">
             <ul>
-              <li className="unpublished-articles">UNPUBLISHED ARTICLES ({showArticles.length})</li>
-              <li className="author">AUTHOR</li>
-                <li className="words">
-                  <Link to={{ pathname:'/', query: { idx: this.state.idx} }}>WORDS</Link>
-                </li>
-              <li className="submitted" onClick={this._setSubmittedSortState}>SUBMITTED</li>
+              <li className="unpublished-articles">
+                UNPUBLISHED ARTICLES ({showArticles.length})
+              </li>
+              <li className="author">
+                AUTHOR
+              </li>
+              <li className="words" onClick={this._setSortState}>
+                WORDS
+              </li>
+              <Link to={{ pathname:'/sortedsubmitted', query: { idx: this.state.idx} }}>
+                <li className="submitted">SUBMITTED</li>
+              </Link>
             </ul>
           </div>
 
@@ -139,7 +126,9 @@ var SortWords = React.createClass({
             {showArticles}
           </div>
 
-          <button className="load-more" onClick={this._increaseIdx}>Load More</button>
+          <button className="load-more" onClick={this._increaseIdx}>
+            Load More
+          </button>
 
         </div>
       );

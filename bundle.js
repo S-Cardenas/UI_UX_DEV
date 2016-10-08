@@ -51,7 +51,8 @@
 	    Router = __webpack_require__(185).Router,
 	    Route = __webpack_require__(185).Route,
 	    IndexRoute = __webpack_require__(185).IndexRoute,
-	    SortedWords = __webpack_require__(248);
+	    SortedWords = __webpack_require__(248),
+	    SortSubmitted = __webpack_require__(249);
 	
 	var routes = React.createElement(
 	  Router,
@@ -60,7 +61,8 @@
 	    Route,
 	    { path: '/' },
 	    React.createElement(IndexRoute, { component: Index }),
-	    React.createElement(Route, { path: 'sortedwords', component: SortedWords })
+	    React.createElement(Route, { path: 'sortedwords', component: SortedWords }),
+	    React.createElement(Route, { path: 'sortedsubmitted', component: SortSubmitted })
 	  )
 	);
 	
@@ -19775,13 +19777,17 @@
 	  displayName: 'Index',
 	
 	  getInitialState: function () {
-	    var cidx = this.props.location.query.idx ? this.props.location.query.idx : 1;
+	    var cidx = this.props.location.query.idx ? parseInt(this.props.location.query.idx) : 1;
 	    return { articles: ArticleStore.all(), idx: cidx };
 	  },
 	
 	  componentDidMount: function () {
 	    this.listener = ArticleStore.addListener(this._onChange);
-	    ApiUtil.fetchArticles();
+	    if (this.state.idx < 4) {
+	      ApiUtil.fetchArticles();
+	    } else {
+	      ApiUtil.fetchMoreArticles();
+	    }
 	  },
 	
 	  componentWillUnmount: function () {
@@ -19802,32 +19808,7 @@
 	    }
 	  },
 	
-	  _sortSubmitted: function () {
-	    var sortedArticles = this.state.articles.slice(0);
-	
-	    sortedArticles = sortedArticles.sort(function (a, b) {
-	      var aDate = new Date(a.publish_at),
-	          bDate = new Date(b.publish_at);
-	
-	      if (aDate.getTime() > bDate.getTime()) {
-	        return 1;
-	      }
-	      if (aDate.getTime() < bDate.getTime()) {
-	        return -1;
-	      }
-	      return 0;
-	    });
-	
-	    return sortedArticles;
-	  },
-	
-	  _setSubmittedSortState: function () {
-	    var truthiness = !this.state.submittedSort;
-	    this.setState({ submittedSort: truthiness, sorted: false });
-	  },
-	
 	  render: function () {
-	    console.log('index.jsx');
 	    if (this.state.articles.length > 0) {
 	      var myArticles;
 	      if (this.state.sorted) {
@@ -19909,18 +19890,22 @@
 	              'AUTHOR'
 	            ),
 	            React.createElement(
-	              'li',
-	              { className: 'words' },
+	              Link,
+	              { to: { pathname: '/sortedwords', query: { idx: this.state.idx } } },
 	              React.createElement(
-	                Link,
-	                { to: { pathname: '/sortedwords', query: { idx: this.state.idx } } },
+	                'li',
+	                { className: 'words' },
 	                'WORDS'
 	              )
 	            ),
 	            React.createElement(
-	              'li',
-	              { className: 'submitted', onClick: this._setSubmittedSortState },
-	              'SUBMITTED'
+	              Link,
+	              { to: { pathname: '/sortedsubmitted', query: { idx: this.state.idx } } },
+	              React.createElement(
+	                'li',
+	                { className: 'submitted' },
+	                'SUBMITTED'
+	              )
 	            )
 	          )
 	        ),
@@ -32501,13 +32486,18 @@
 	  displayName: 'SortWords',
 	
 	  getInitialState: function () {
-	    return { articles: ArticleStore.all(), idx: this.props.location.query.idx, sorted: true,
-	      submittedSort: false };
+	    return { articles: ArticleStore.all(),
+	      idx: parseInt(this.props.location.query.idx),
+	      sort: 'descending' };
 	  },
 	
 	  componentDidMount: function () {
 	    this.listener = ArticleStore.addListener(this._onChange);
-	    ApiUtil.fetchArticles();
+	    if (this.state.idx < 4) {
+	      ApiUtil.fetchArticles();
+	    } else {
+	      ApiUtil.fetchMoreArticles();
+	    }
 	  },
 	
 	  componentWillUnmount: function () {
@@ -32529,33 +32519,15 @@
 	  },
 	
 	  _sortWords: function () {
-	    var sortedArticles = this.state.articles.slice(0);
+	    var sortedArticles = this.state.articles.slice(0),
+	        polarity = this.state.sort === 'descending' ? 1 : -1;
 	
 	    sortedArticles = sortedArticles.sort(function (a, b) {
 	      if (a.words > b.words) {
-	        return 1;
+	        return polarity * 1;
 	      }
 	      if (a.words < b.words) {
-	        return -1;
-	      }
-	      return 0;
-	    });
-	
-	    return sortedArticles;
-	  },
-	
-	  _sortSubmitted: function () {
-	    var sortedArticles = this.state.articles.slice(0);
-	
-	    sortedArticles = sortedArticles.sort(function (a, b) {
-	      var aDate = new Date(a.publish_at),
-	          bDate = new Date(b.publish_at);
-	
-	      if (aDate.getTime() > bDate.getTime()) {
-	        return 1;
-	      }
-	      if (aDate.getTime() < bDate.getTime()) {
-	        return -1;
+	        return polarity * -1;
 	      }
 	      return 0;
 	    });
@@ -32564,20 +32536,196 @@
 	  },
 	
 	  _setSortState: function () {
-	    var truthiness = !this.state.sorted;
-	    this.setState({ sorted: truthiness, submittedSort: false });
-	  },
-	
-	  _setSubmittedSortState: function () {
-	    var truthiness = !this.state.submittedSort;
-	    this.setState({ submittedSort: truthiness, sorted: false });
+	    var newSort = this.state.sort === 'descending' ? 'ascending' : "descending";
+	    this.setState({ sort: newSort });
 	  },
 	
 	  render: function () {
-	    console.log(this.props.location.query.idx);
-	    console.log('sortedWords');
 	    if (this.state.articles.length > 0) {
 	      var myArticles = this._sortWords();
+	      myArticles = myArticles.map(function (article, i) {
+	        var currentTime = new Date(),
+	            publishedTime = new Date(article.publish_at),
+	            elapsedSec = Math.floor((currentTime - publishedTime) / 1000),
+	            elapsedMin = Math.floor(elapsedSec / 60),
+	            elapsedHours = Math.floor(elapsedMin / 60),
+	            elapsedDays = Math.floor(elapsedHours / 24),
+	            parity = i % 2 === 0 ? 'odd' : 'even',
+	            classTitle = "article-item " + parity + " group";
+	
+	        return React.createElement(
+	          'div',
+	          { className: classTitle, key: i },
+	          React.createElement(
+	            'div',
+	            { className: 'item-title group' },
+	            React.createElement('img', { className: 'title-image', src: article.image }),
+	            React.createElement(
+	              'a',
+	              { href: article.url },
+	              article.title
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'item-author' },
+	            React.createElement(
+	              'p',
+	              null,
+	              article.profile.first_name,
+	              ' ',
+	              article.profile.last_name
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'item-words' },
+	            article.words
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'item-submitted' },
+	            elapsedDays,
+	            ' days ago'
+	          )
+	        );
+	      });
+	
+	      var showArticles = myArticles.slice(0, this.state.idx * 10);
+	
+	      return React.createElement(
+	        'div',
+	        { className: 'content' },
+	        React.createElement(
+	          'div',
+	          { className: 'header group' },
+	          React.createElement(
+	            'ul',
+	            null,
+	            React.createElement(
+	              'li',
+	              { className: 'unpublished-articles' },
+	              'UNPUBLISHED ARTICLES (',
+	              showArticles.length,
+	              ')'
+	            ),
+	            React.createElement(
+	              'li',
+	              { className: 'author' },
+	              'AUTHOR'
+	            ),
+	            React.createElement(
+	              'li',
+	              { className: 'words', onClick: this._setSortState },
+	              'WORDS'
+	            ),
+	            React.createElement(
+	              Link,
+	              { to: { pathname: '/sortedsubmitted', query: { idx: this.state.idx } } },
+	              React.createElement(
+	                'li',
+	                { className: 'submitted' },
+	                'SUBMITTED'
+	              )
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'articles-list' },
+	          showArticles
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'load-more', onClick: this._increaseIdx },
+	          'Load More'
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        'Loading'
+	      );
+	    }
+	  }
+	});
+	
+	module.exports = SortWords;
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1),
+	    ArticleStore = __webpack_require__(160),
+	    ApiUtil = __webpack_require__(183),
+	    Link = __webpack_require__(185).Link;
+	
+	var SortSubmitted = React.createClass({
+	  displayName: 'SortSubmitted',
+	
+	  getInitialState: function () {
+	    return { articles: ArticleStore.all(),
+	      idx: parseInt(this.props.location.query.idx),
+	      sort: 'descending' };
+	  },
+	
+	  componentDidMount: function () {
+	    this.listener = ArticleStore.addListener(this._onChange);
+	    if (this.state.idx < 4) {
+	      ApiUtil.fetchArticles();
+	    } else {
+	      ApiUtil.fetchMoreArticles();
+	    }
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.listener.remove();
+	  },
+	
+	  _onChange: function () {
+	    this.setState({ articles: ArticleStore.all() });
+	  },
+	
+	  _increaseIdx: function () {
+	    var nextIdx = this.state.idx + 1;
+	    if (nextIdx === 4) {
+	      ApiUtil.fetchMoreArticles();
+	      this.setState({ idx: nextIdx });
+	    } else {
+	      this.setState({ idx: nextIdx });
+	    }
+	  },
+	
+	  _sortSubmitted: function () {
+	    var sortedArticles = this.state.articles.slice(0),
+	        polarity = this.state.sort === 'descending' ? 1 : -1;
+	
+	    sortedArticles = sortedArticles.sort(function (a, b) {
+	      var aDate = new Date(a.publish_at),
+	          bDate = new Date(b.publish_at);
+	
+	      if (aDate.getTime() > bDate.getTime()) {
+	        return polarity * 1;
+	      }
+	      if (aDate.getTime() < bDate.getTime()) {
+	        return polarity * -1;
+	      }
+	      return 0;
+	    });
+	
+	    return sortedArticles;
+	  },
+	
+	  _setSortState: function () {
+	    var newSort = this.state.sort === 'descending' ? 'ascending' : "descending";
+	    this.setState({ sort: newSort });
+	  },
+	
+	  render: function () {
+	    if (this.state.articles.length > 0) {
+	      var myArticles = this._sortSubmitted();
 	      myArticles = myArticles.map(function (article, i) {
 	        var currentTime = new Date(),
 	            publishedTime = new Date(article.publish_at),
@@ -32650,17 +32798,17 @@
 	              'AUTHOR'
 	            ),
 	            React.createElement(
-	              'li',
-	              { className: 'words' },
+	              Link,
+	              { to: { pathname: '/sortedwords', query: { idx: this.state.idx } } },
 	              React.createElement(
-	                Link,
-	                { to: { pathname: '/', query: { idx: this.state.idx } } },
+	                'li',
+	                { className: 'words' },
 	                'WORDS'
 	              )
 	            ),
 	            React.createElement(
 	              'li',
-	              { className: 'submitted', onClick: this._setSubmittedSortState },
+	              { className: 'submitted', onClick: this._setSortState },
 	              'SUBMITTED'
 	            )
 	          )
@@ -32686,7 +32834,7 @@
 	  }
 	});
 	
-	module.exports = SortWords;
+	module.exports = SortSubmitted;
 
 /***/ }
 /******/ ]);
