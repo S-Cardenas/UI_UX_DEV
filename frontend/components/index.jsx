@@ -5,13 +5,17 @@ var React = require('react'),
 
 var Index = React.createClass({
   getInitialState: function() {
-    return { articles: ArticleStore.all(), idx: 1, sorted: false,
-            submittedSort: false };
+    var cidx = (this.props.location.query.idx ? this.props.location.query.idx : 1);
+    return { articles: ArticleStore.all(), idx: cidx };
   },
 
   componentDidMount: function() {
-    this.articleListener = ArticleStore.addListener(this._onChange);
+    this.listener = ArticleStore.addListener(this._onChange);
     ApiUtil.fetchArticles();
+  },
+
+  componentWillUnmount: function() {
+    this.listener.remove();
   },
 
   _onChange: function() {
@@ -27,22 +31,6 @@ var Index = React.createClass({
     else {
       this.setState({ idx: nextIdx});
     }
-  },
-
-  _sortWords: function() {
-    var sortedArticles = this.state.articles.slice(0);
-
-    sortedArticles = sortedArticles.sort(function(a, b) {
-      if (a.words > b.words) {
-         return 1;
-      }
-      if (a.words < b.words) {
-         return -1;
-      }
-      return 0;
-    });
-
-    return sortedArticles;
   },
 
   _sortSubmitted: function() {
@@ -64,17 +52,13 @@ var Index = React.createClass({
     return sortedArticles;
   },
 
-  _setSortState: function() {
-    var truthiness = !this.state.sorted;
-    this.setState({ sorted: truthiness, submittedSort: false });
-  },
-
   _setSubmittedSortState: function() {
     var truthiness = !this.state.submittedSort;
     this.setState({ submittedSort: truthiness, sorted: false });
   },
 
   render: function() {
+    console.log('index.jsx');
     if (this.state.articles.length > 0) {
       var myArticles;
       if (this.state.sorted) {
@@ -131,7 +115,9 @@ var Index = React.createClass({
             <ul>
               <li className="unpublished-articles">UNPUBLISHED ARTICLES ({showArticles.length})</li>
               <li className="author">AUTHOR</li>
-              <li className="words" onClick={this._setSortState}>WORDS</li>
+              <li className="words">
+                <Link to={{ pathname:'/sortedwords', query: { idx: this.state.idx} }}>WORDS</Link>
+              </li>
               <li className="submitted" onClick={this._setSubmittedSortState}>SUBMITTED</li>
             </ul>
           </div>
@@ -141,7 +127,7 @@ var Index = React.createClass({
           </div>
 
           <button className="load-more" onClick={this._increaseIdx}>Load More</button>
-          <Link to={'/sortedwords'} params={{blank: 'stefan cardenas'}}>Sorted Words</Link>
+
         </div>
       );
     }

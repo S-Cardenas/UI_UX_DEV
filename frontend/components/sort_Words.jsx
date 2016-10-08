@@ -1,16 +1,21 @@
 var React = require('react'),
     ArticleStore = require('../stores/article_store.js'),
-    ApiUtil = require('../util/api_util.js');
+    ApiUtil = require('../util/api_util.js'),
+    Link = require('react-router').Link;
 
 var SortWords = React.createClass({
   getInitialState: function() {
-    return { articles: ArticleStore.all(), idx: 1, sorted: false,
+    return { articles: ArticleStore.all(), idx: this.props.location.query.idx, sorted: true,
             submittedSort: false };
   },
 
   componentDidMount: function() {
-    this.articleListener = ArticleStore.addListener(this._onChange);
+    this.listener = ArticleStore.addListener(this._onChange);
     ApiUtil.fetchArticles();
+  },
+
+  componentWillUnmount: function() {
+    this.listener.remove();
   },
 
   _onChange: function() {
@@ -74,27 +79,19 @@ var SortWords = React.createClass({
   },
 
   render: function() {
-    console.log(this.props.blank);
+    console.log(this.props.location.query.idx);
+    console.log('sortedWords');
     if (this.state.articles.length > 0) {
-      var myArticles;
-      if (this.state.sorted) {
-        myArticles = this._sortWords();
-      }
-      else if (this.state.submittedSort) {
-        myArticles = this._sortSubmitted();
-      }
-      else {
-        myArticles = this.state.articles;
-      }
-        myArticles = myArticles.map(function(article, i) {
-        var currentTime = new Date(),
-            publishedTime = new Date(article.publish_at),
-            elapsedSec = Math.floor((currentTime - publishedTime)/1000),
-            elapsedMin = Math.floor(elapsedSec / 60),
-            elapsedHours = Math.floor(elapsedMin / 60),
-            elapsedDays = Math.floor(elapsedHours / 24),
-            parity = ( (i % 2 === 0) ? 'odd' : 'even'),
-            classTitle = "article-item " + parity + " group";
+      var myArticles  = this._sortWords();
+      myArticles = myArticles.map(function(article, i) {
+      var currentTime = new Date(),
+          publishedTime = new Date(article.publish_at),
+          elapsedSec = Math.floor((currentTime - publishedTime)/1000),
+          elapsedMin = Math.floor(elapsedSec / 60),
+          elapsedHours = Math.floor(elapsedMin / 60),
+          elapsedDays = Math.floor(elapsedHours / 24),
+          parity = ( (i % 2 === 0) ? 'odd' : 'even'),
+          classTitle = "article-item " + parity + " group";
 
         return(
           <div className={classTitle} key={i}>
@@ -131,7 +128,9 @@ var SortWords = React.createClass({
             <ul>
               <li className="unpublished-articles">UNPUBLISHED ARTICLES ({showArticles.length})</li>
               <li className="author">AUTHOR</li>
-              <li className="words" onClick={this._setSortState}>WORDS</li>
+                <li className="words">
+                  <Link to={{ pathname:'/', query: { idx: this.state.idx} }}>WORDS</Link>
+                </li>
               <li className="submitted" onClick={this._setSubmittedSortState}>SUBMITTED</li>
             </ul>
           </div>
