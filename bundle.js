@@ -26756,7 +26756,7 @@
 	  fetchArticles: function () {
 	    var request = new XMLHttpRequest();
 	    var articles;
-	    request.open('GET', 'articles.json', true);
+	    request.open('GET', 'data/articles.json', true);
 	    request.onload = function () {
 	      if (request.status >= 200 && request.status < 400) {
 	        // Success!
@@ -26776,7 +26776,7 @@
 	  fetchMoreArticles: function () {
 	    var request = new XMLHttpRequest();
 	    var articles;
-	    request.open('GET', 'more-articles.json', true);
+	    request.open('GET', 'data/more-articles.json', true);
 	    request.onload = function () {
 	      if (request.status >= 200 && request.status < 400) {
 	        // Success!
